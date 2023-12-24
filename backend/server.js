@@ -1,19 +1,14 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+import express, { response } from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import { PORT } from "./config.js";
+import { User } from "./models/userModel.js";
 
-const mongoose = require('mongoose');
-
-mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Could not connect to MongoDB...', err));
-  
 const app = express();
 
-app.use(bodyParser.json());
-
-app.post("/api/login", async (req, res) => {
+app.post("api/login", async (req, res) => {
   const { username, password } = req.body;
-  const user = users.find((u) => u.username === username);
+  const user = await User.findOne({ username: username });
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return res.status(400).json({ error: "Invalid username or password" });
@@ -29,83 +24,44 @@ app.post("/api/login", async (req, res) => {
   res.send("Login request received");
 });
 
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
+
+app.use(cors());
+app.use(express.json());
 
 app.post("/api/register", async (req, res) => {
   const { firstName, lastName, username, email, password } = req.body;
 
   // Check if the username or email already exists
-  const existingUser = users.find(
-    (u) => u.username === username || u.email === email
-  );
+  const existingUser = await User.findOne({
+    $or: [{ username: username }, { email: email }],
+  });
   if (existingUser) {
     return res.status(400).json({ error: "Username or email already exists" });
   }
-
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
   // Create the new user
-  const user = {
-    firstName,
-    lastName,
-    username,
-    email,
-    password: hashedPassword,
-    role: "user",
-  };
-
-  // Add the new user to the users array
-  users.push(user);
-
-  res.json({
-    message: "User registered successfully",
-    user: { firstName, lastName, username, email, role: user.role },
+  const newUser = ({
+    firstName: req.body.firstName,
+    lastName:   req.body.lastName,
+    username: req.body.username,
+    email: req.body.email,
+    password: req.body.password
   });
-});
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+  // Save the new user to the database
+const user = await User.create(newUser);
+return response.status(201).send(user);       
+
 });
 
 /* Database Will be added*/
-let users = []; // This would typically be a database
 
 const saltRounds = 10;
 
-app.post("/api/users", async (req, res) => {
-  const { firstName, lastName, username, email, password, role } = req.body;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-  const newUser = {
-    firstName,
-    lastName,
-    username,
-    email,
-    password: hashedPassword,
-    role,
-  };
-  users.push(newUser);
-  res.json(newUser);
-});
-
-const jwt = require("jsonwebtoken");
+import pkg from "jsonwebtoken";
+const { Jwt } = pkg;
 
 const secretKey = "your-secret-key"; // This should be stored securely
-
-app.post("/api/login", async (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find((u) => u.username === username);
-
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(400).json({ error: "Invalid username or password" });
-  }
-
-  const token = jwt.sign(
-    { username: user.username, role: user.role },
-    secretKey
-  );
-  res.json({ message: "Login successful", token });
-});
 
 /* Authentication */
 function authenticate(req, res, next) {
@@ -129,7 +85,7 @@ function authenticate(req, res, next) {
 // app.use(authenticate);
 
 /* Password Encryption */
-const crypto = require("crypto");
+import crypto from "crypto";
 
 let passwordResetTokens = [];
 
@@ -416,3 +372,16 @@ app.delete(
     res.json({ message: "Subtask deleted successfully" });
   }
 );
+const MONGODBURL =
+  "mongodb+srv://admino:admin@cluster0.263bseg.mongodb.net/TaskManagement?retryWrites=true&w=majority";
+mongoose
+  .connect(MONGODBURL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("MongoDB connected");
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });

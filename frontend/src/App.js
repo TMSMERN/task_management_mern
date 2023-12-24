@@ -15,7 +15,7 @@ function HomePage({ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin }) {
   return <Login />;
 }
 
-function UserHome({ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin }) {
+/*function UserHome({ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin }) {
   const navigate = useNavigate();
 
   if (!isLoggedIn) {
@@ -24,22 +24,22 @@ function UserHome({ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin }) {
 
   return isAdmin ? <AdminHomePage /> : <UserHomePage />;
 }
-
+*/
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   return (
     <Router>
-      <div>
-        <Routes>
-          <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} isAdmin={isAdmin} setIsAdmin={setIsAdmin} />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<UserHome isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} isAdmin={isAdmin} setIsAdmin={setIsAdmin} />} />
-        </Routes>
-        {!isLoggedIn && <Link to="/register">Register</Link>}
-      </div>
-    </Router>
+    <div>
+      <Routes>
+        <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} isAdmin={isAdmin} setIsAdmin={setIsAdmin} />} />
+        <Route path="/register" element={<Register />} />
+
+      </Routes>
+      {!isLoggedIn && <Link to="/register">Register</Link>}
+    </div>
+  </Router>
   );
 }
 

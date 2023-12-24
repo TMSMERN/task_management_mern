@@ -1,0 +1,62 @@
+.topbar {
+  background-color: darkblue;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.topbar h1 {
+  color: white;
+}
+
+.topbar input[type="search"] {
+  width: 0;
+  transition: width 0.5s ease;
+}
+
+.topbar input[type="search"]:hover {
+  width: 200px;
+}
+
+.topbar button {
+  color: white;
+  transition: color 0.5s ease;
+}
+
+.topbar button:hover {
+  color: red;
+}
+
+.sidebar {
+  background-color: darkblue;
+  color: white;
+}
+
+.sidebar ul li a {
+  color: white;
+  transition: color 0.5s ease;
+}
+
+.sidebar ul li a:hover {
+  color: brightwhite;
+  animation: color-pop 0.5s infinite;
+}
+
+@keyframes color-pop {
+  0% {
+    color: brightwhite;
+  }
+  25% {
+    color: red;
+  }
+  50% {
+    color: green;
+  }
+  75% {
+    color: blue;
+  }
+  100% {
+    color: brightwhite;
+  }
+}
