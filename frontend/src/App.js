@@ -35,7 +35,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} isAdmin={isAdmin} setIsAdmin={setIsAdmin} />} />
         <Route path="/register" element={<Register />} />
-
+        <Route path="/login" element={<Login />} />
       </Routes>
       {!isLoggedIn && <Link to="/register">Register</Link>}
     </div>

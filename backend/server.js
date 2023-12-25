@@ -3,28 +3,29 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { PORT } from "./config.js";
 import { User } from "./models/userModel.js";
+import bcrypt from "bcrypt";
 
 const app = express();
+app.set('json escape', true)
 
-app.post("api/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
-  const user = await User.findOne({ username: username });
 
-  if (!user || !(await bcrypt.compare(password, user.password))) {
+  // Find the user by their username
+  const user = await User.findOne({ username });
+  if (!user) {
     return res.status(400).json({ error: "Invalid username or password" });
   }
 
-  const token = jwt.sign(
-    { username: user.username, role: user.role },
-    SECRET_KEY,
-    { expiresIn: "1h" } // token will expire in 1 hour
-  );
+  // Check the password
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+    return res.status(400).json({ error: "Invalid username or password" });
+  }
 
-  res.json({ token, username: user.username });
-  res.send("Login request received");
+  // The username and password are valid, so you can start a session or issue a JWT
+  // ...
 });
-
-import bcrypt from "bcrypt";
 
 app.use(cors());
 app.use(express.json());
@@ -39,29 +40,32 @@ app.post("/api/register", async (req, res) => {
   if (existingUser) {
     return res.status(400).json({ error: "Username or email already exists" });
   }
+
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, 10);
   // Create the new user
-  const newUser = ({
-    firstName: req.body.firstName,
-    lastName:   req.body.lastName,
-    username: req.body.username,
-    email: req.body.email,
-    password: req.body.password
-  });
+  const newUser = {
+    firstName,
+    lastName,
+    username,
+    email,
+    password,
+    isAdmin: false,
+  };
 
   // Save the new user to the database
-const user = await User.create(newUser);
-return response.status(201).send(user);       
-
+  const user = await User.create(newUser);
+  return res.status(201).send(user);
 });
 
 /* Database Will be added*/
 
 const saltRounds = 10;
 
-import pkg from "jsonwebtoken";
-const { Jwt } = pkg;
+//import pkg from "jsonwebtoken";
+//const { Jwt } = pkg;
 
-const secretKey = "your-secret-key"; // This should be stored securely
+//const secretKey = "your-secret-key"; // This should be stored securely
 
 /* Authentication */
 function authenticate(req, res, next) {

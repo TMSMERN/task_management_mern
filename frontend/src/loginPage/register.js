@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './register.css';
-
+import LoginPage from './login';
 function RegisterPage() {
+  const navigate = useNavigate();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
@@ -32,16 +33,18 @@ function RegisterPage() {
     }
 
     try {
-      const response = await axios.post('/api/register', {
+      const response = await axios.post('http://localhost:5000/api/register', {
         firstName,
         lastName,
         username,
         email,
-        password,
+        password
       });
-      console.log(response.data);
-      setServerResponse(response.data);
-      alert(response.data);
+      //console.log(response.data);
+      //setServerResponse(response.data);
+      
+      alert(" Kullanıcı başarı ile kaydoldu: "+response.data.firstName);
+      navigate("/login");
     } catch (error) {
       console.error('Error registering', error);
     }
