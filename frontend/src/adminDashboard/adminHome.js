@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Tasks from './tasks';
 
 function AdminHomePage() {
   return (
@@ -18,7 +19,7 @@ function AdminHomePage() {
         </ul>
       </div>
       <div className="content">
-        {/* Add your page content here */}
+        <Tasks />
       </div>
     </div>
   );

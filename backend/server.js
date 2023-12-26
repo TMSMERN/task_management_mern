@@ -3,32 +3,87 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { PORT } from "./config.js";
 import { User } from "./models/userModel.js";
-import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+//import bcrypt from "bcrypt";
+import { Task } from "./models/taskModel.js";
 
 const app = express();
-app.set('json escape', true)
-
-app.post("/api/login", async (req, res) => {
-  const { username, password } = req.body;
-
-  // Find the user by their username
-  const user = await User.findOne({ username });
-  if (!user) {
-    return res.status(400).json({ error: "Invalid username or password" });
-  }
-
-  // Check the password
-  const validPassword = await bcrypt.compare(password, user.password);
-  if (!validPassword) {
-    return res.status(400).json({ error: "Invalid username or password" });
-  }
-
-  // The username and password are valid, so you can start a session or issue a JWT
-  // ...
-});
 
 app.use(cors());
 app.use(express.json());
+app.set("json escape", true);
+
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: false }));
+
+//const saltRounds = 10;
+
+/* Role Based Authorization */
+/* User Pagination */ /* Update and Delete Users */ // Update user// Update user details// Delete user
+
+app.get("/api/users/:username", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+/* List Users */
+/* Creating Tasks */
+app.post("/api/tasks", async (req, res) => {
+  try {
+    const task = new Task(req.body);
+    await task.save();
+    res.status(201).send(task);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+/* List Tasks */
+app.get("/api/tasks", async (req, res) => {
+  try {
+    const tasks = await Task.find({});
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+app.post("/api/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Find the user by their username
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ error: "Invalid username or password" });
+    }
+
+    // Check the password
+    //const validPassword = await bcrypt.compare(password, user.password);
+    if (!password) {
+      return res.status(400).json({ error: "Invalid username or passworddd" });
+    }
+
+    console.log("User logged in:", user);
+    // The username and password are valid, so you can start a session or issue a JWT
+    const token = jwt.sign({ userId: user._id }, "your-secret-key", {
+      expiresIn: "1h",
+    });
+    return res.json({ success: true, user, token });
+    // ...
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 
 app.post("/api/register", async (req, res) => {
   const { firstName, lastName, username, email, password } = req.body;
@@ -41,8 +96,7 @@ app.post("/api/register", async (req, res) => {
     return res.status(400).json({ error: "Username or email already exists" });
   }
 
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // Later we will add hashing password
   // Create the new user
   const newUser = {
     firstName,
@@ -58,324 +112,6 @@ app.post("/api/register", async (req, res) => {
   return res.status(201).send(user);
 });
 
-/* Database Will be added*/
-
-const saltRounds = 10;
-
-//import pkg from "jsonwebtoken";
-//const { Jwt } = pkg;
-
-//const secretKey = "your-secret-key"; // This should be stored securely
-
-/* Authentication */
-function authenticate(req, res, next) {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) {
-    return res.status(401).json({ error: "No token provided" });
-  }
-
-  jwt.verify(token, secretKey, (err, user) => {
-    if (err) {
-      return res.status(403).json({ error: "Invalid token" });
-    }
-
-    req.user = user;
-    next();
-  });
-}
-
-// app.use(authenticate);
-
-/* Password Encryption */
-import crypto from "crypto";
-
-let passwordResetTokens = [];
-
-app.post("/api/password-reset-request", (req, res) => {
-  const { email } = req.body;
-  const user = users.find((u) => u.email === email);
-
-  if (!user) {
-    return res.status(400).json({ error: "Invalid email" });
-  }
-
-  const token = crypto.randomBytes(20).toString("hex");
-  const expires = new Date().getTime() + 3600000; // 1 hour from now
-  passwordResetTokens.push({ token, email, expires });
-
-  // Send email to user with the token
-  // ...
-
-  res.json({ message: "Password reset email sent" });
-});
-
-/*  Password Reset */
-app.post("/api/reset-password", async (req, res) => {
-  const { token, newPassword } = req.body;
-  const passwordResetToken = passwordResetTokens.find((t) => t.token === token);
-
-  if (
-    !passwordResetToken ||
-    passwordResetToken.expires < new Date().getTime()
-  ) {
-    return res.status(400).json({ error: "Invalid or expired token" });
-  }
-
-  const user = users.find((u) => u.email === passwordResetToken.email);
-  user.password = await bcrypt.hash(newPassword, saltRounds);
-  res.json({ message: "Password reset successful" });
-});
-
-/* Role Based Authorization */
-function authorize(role) {
-  return (req, res, next) => {
-    if (req.user.role !== role) {
-      return res.status(403).json({ error: "Unauthorized" });
-    }
-    next();
-  };
-}
-
-app.get("/api/admin", authenticate, authorize("admin"), (req, res) => {
-  res.json({ message: "Welcome, admin!" });
-});
-
-/* User Pagination */
-app.get("/api/listUsers", (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const start = (page - 1) * limit;
-  const end = page * limit;
-
-  const paginatedUsers = users.slice(start, end);
-  res.json(paginatedUsers);
-});
-
-let emailVerificationTokens = [];
-
-app.post("/api/register", async (req, res) => {
-  const { firstName, lastName, username, email, password, role } = req.body;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-  const newUser = {
-    firstName,
-    lastName,
-    username,
-    email,
-    password: hashedPassword,
-    role,
-    isEmailVerified: false,
-  };
-  users.push(newUser);
-
-  const token = crypto.randomBytes(20).toString("hex");
-  const expires = new Date().getTime() + 3600000; // 1 hour from now
-  emailVerificationTokens.push({ token, email, expires });
-
-  // Send email to user with the token
-  // ...
-
-  res.json({ message: "Registration successful. Please verify your email." });
-});
-
-app.get("/api/verify-email", (req, res) => {
-  const { token } = req.query;
-  const emailVerificationToken = emailVerificationTokens.find(
-    (t) => t.token === token
-  );
-
-  if (
-    !emailVerificationToken ||
-    emailVerificationToken.expires < new Date().getTime()
-  ) {
-    return res.status(400).json({ error: "Invalid or expired token" });
-  }
-
-  const user = users.find((u) => u.email === emailVerificationToken.email);
-  user.isEmailVerified = true;
-  res.json({ message: "Email verification successful" });
-});
-/* Update and Delete Users */
-
-// Update user
-app.put("/api/users/:username", async (req, res) => {
-  const { username } = req.params;
-  const { firstName, lastName, email, password, role } = req.body;
-
-  const user = users.find((u) => u.username === username);
-
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
-  }
-
-  // Hash the new password if it is provided
-  if (password) {
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    user.password = hashedPassword;
-  }
-
-  // Update user details
-  user.firstName = firstName || user.firstName;
-  user.lastName = lastName || user.lastName;
-  user.email = email || user.email;
-  user.role = role || user.role;
-
-  res.json({ message: "User updated successfully", user });
-});
-
-// Delete user
-app.delete("/api/users/:username", (req, res) => {
-  const { username } = req.params;
-
-  const userIndex = users.findIndex((u) => u.username === username);
-
-  if (userIndex === -1) {
-    return res.status(404).json({ error: "User not found" });
-  }
-
-  users.splice(userIndex, 1);
-
-  res.json({ message: "User deleted successfully" });
-});
-
-/* Tasks and Subtasks */
-let tasks = [];
-let subtasks = [];
-
-app.post("/api/tasks", authenticate, authorize("admin"), (req, res) => {
-  const { name, description, dueDate, assignedUser } = req.body;
-  const newTask = {
-    id: tasks.length + 1,
-    name,
-    description,
-    dueDate,
-    assignedUser,
-    hasSubtasks: false,
-  };
-  tasks.push(newTask);
-  res.json(newTask);
-});
-
-app.post("/api/subtasks", authenticate, authorize("admin"), (req, res) => {
-  const { description, isMust, taskId } = req.body;
-  const parentTask = tasks.find((t) => t.id === taskId);
-
-  if (!parentTask) {
-    return res.status(400).json({ error: "Invalid task ID" });
-  }
-
-  parentTask.hasSubtasks = true;
-  const newSubtask = { id: subtasks.length + 1, description, isMust, taskId };
-  subtasks.push(newSubtask);
-  res.json(newSubtask);
-});
-
-/* Retrieving Tasks and Subtasks */
-app.get("/api/tasks", (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
-  const sort = req.query.sort;
-  const search = req.query.search;
-
-  let filteredTasks = [...tasks];
-
-  if (search) {
-    filteredTasks = filteredTasks.filter((task) =>
-      task.name.toLowerCase().includes(search.toLowerCase())
-    );
-  }
-
-  if (sort) {
-    filteredTasks.sort((a, b) => {
-      if (a[sort] < b[sort]) return -1;
-      if (a[sort] > b[sort]) return 1;
-      return 0;
-    });
-  }
-
-  const start = (page - 1) * pageSize;
-  const end = start + pageSize;
-
-  const selectedTasks = filteredTasks.slice(start, end);
-
-  const tasksWithSubtasks = selectedTasks.map((task) => {
-    const taskSubtasks = subtasks.filter(
-      (subtask) => subtask.taskId === task.id
-    );
-    return { ...task, subtasks: taskSubtasks };
-  });
-
-  res.json(tasksWithSubtasks);
-});
-/* Updating Tasks and Subtasks */
-app.put("/api/tasks/:id", authenticate, authorize("admin"), (req, res) => {
-  const { id } = req.params;
-  const { name, description, dueDate, assignedUser } = req.body;
-
-  const task = tasks.find((t) => t.id === parseInt(id));
-
-  if (!task) {
-    return res.status(404).json({ error: "Task not found" });
-  }
-
-  task.name = name || task.name;
-  task.description = description || task.description;
-  task.dueDate = dueDate || task.dueDate;
-  task.assignedUser = assignedUser || task.assignedUser;
-
-  res.json(task);
-});
-
-app.put("/api/subtasks/:id", authenticate, authorize("admin"), (req, res) => {
-  const { id } = req.params;
-  const { description, isMust } = req.body;
-
-  const subtask = subtasks.find((t) => t.id === parseInt(id));
-
-  if (!subtask) {
-    return res.status(404).json({ error: "Subtask not found" });
-  }
-
-  subtask.description = description || subtask.description;
-  subtask.isMust = isMust || subtask.isMust;
-
-  res.json(subtask);
-});
-
-/* Deleting Tasks and Subtasks */
-app.delete("/api/tasks/:id", authenticate, authorize("admin"), (req, res) => {
-  const { id } = req.params;
-
-  const taskIndex = tasks.findIndex((t) => t.id === parseInt(id));
-
-  if (taskIndex === -1) {
-    return res.status(404).json({ error: "Task not found" });
-  }
-
-  tasks.splice(taskIndex, 1);
-
-  res.json({ message: "Task deleted successfully" });
-});
-
-app.delete(
-  "/api/subtasks/:id",
-  authenticate,
-  authorize("admin"),
-  (req, res) => {
-    const { id } = req.params;
-
-    const subtaskIndex = subtasks.findIndex((t) => t.id === parseInt(id));
-
-    if (subtaskIndex === -1) {
-      return res.status(404).json({ error: "Subtask not found" });
-    }
-
-    subtasks.splice(subtaskIndex, 1);
-
-    res.json({ message: "Subtask deleted successfully" });
-  }
-);
 const MONGODBURL =
   "mongodb+srv://admino:admin@cluster0.263bseg.mongodb.net/TaskManagement?retryWrites=true&w=majority";
 mongoose

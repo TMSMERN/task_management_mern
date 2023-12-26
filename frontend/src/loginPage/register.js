@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import './register.css';
-import LoginPage from './login';
+
 function RegisterPage() {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState('');
@@ -43,7 +43,7 @@ function RegisterPage() {
       //console.log(response.data);
       //setServerResponse(response.data);
       
-      alert(" Kullanıcı başarı ile kaydoldu: "+response.data.firstName);
+      alert(" Kullanıcı başarı ile kaydoldu: " + response.data.firstName);
       navigate("/login");
     } catch (error) {
       console.error('Error registering', error);

@@ -4,6 +4,7 @@ import Task from "./task";
 import Home from "./home";
 import Profile from "./profile";
 import "./home.css";
+
 function UserHomePage() {
   return (
     <div>
@@ -28,7 +29,7 @@ function UserHomePage() {
       <div className="content">
         <Router>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/tasks" element={<Task />} />
             {/* Add more routes as needed */}
