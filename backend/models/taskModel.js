@@ -5,10 +5,12 @@ export const TaskSchema = mongoose.Schema({
   taskName: { type: String, required: true },
   taskDescription: { type: String, required: true },
   dueDate: { type: Date, required: true },
+  taskStatus: { type: String, required: true },
   subTasks: [{
     taskName: { type: String, required: true },
     taskDescription: { type: String, required: true },
     dueDate: { type: Date, required: true },
+    isMustDo: { type: Boolean, required: true },
   }],
 });
 

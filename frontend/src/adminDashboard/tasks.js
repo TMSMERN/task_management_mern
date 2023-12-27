@@ -6,6 +6,7 @@ const Tasks = () => {
   const [taskDescription, setTaskDescription] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [taskStatus, setTaskStatus] = useState("");
   const [subtasks, setSubtasks] = useState([]);
 
   const handleTaskNameChange = (e) => {
@@ -19,7 +20,9 @@ const Tasks = () => {
   const handleAssignedToChange = (e) => {
     setAssignedTo(e.target.value);
   };
-
+  const handleTaskStatusChange = (e) => {
+    setTaskStatus(e.target.value);
+  };
   const handleDueDateChange = (e) => {
     setDueDate(e.target.value);
   };
@@ -101,6 +104,15 @@ const Tasks = () => {
         <label>
           Due Date:
           <input type="date" value={dueDate} onChange={handleDueDateChange} />
+        </label>
+        <br />
+        <label>
+          Task Status:
+          <input
+            type="text"
+            value={taskStatus}
+            onChange={handleTaskStatusChange}
+          />
         </label>
         <br />
         <label>

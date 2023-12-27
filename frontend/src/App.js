@@ -51,8 +51,8 @@ function App() {
   };
 
   return (
-    <Router>
-      <div>
+    <div>
+      <Router>
         <Routes>
           <Route
             path="/"
@@ -71,8 +71,8 @@ function App() {
           <Route path="/tasks" element={<Task />} />
           <Route path="/admin" element={<AdminHomePage />} />
         </Routes>
-      </div>
-    </Router>
+      </Router>
+    </div>
   );
 }
 

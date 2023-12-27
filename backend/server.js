@@ -33,7 +33,9 @@ app.get("/api/users/:username", async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
+
 /* List Users */
+
 /* Creating Tasks */
 app.post("/api/tasks", async (req, res) => {
   try {
