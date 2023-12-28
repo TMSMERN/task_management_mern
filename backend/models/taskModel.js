@@ -5,7 +5,7 @@ export const TaskSchema = mongoose.Schema({
   taskName: { type: String, required: true },
   taskDescription: { type: String, required: true },
   dueDate: { type: Date, required: true },
-  taskStatus: { type: String, required: true },
+  taskStatus: { type: String,enum: ['pending', 'done', 'in_progress'], required: true },
   subTasks: [{
     taskName: { type: String, required: true },
     taskDescription: { type: String, required: true },

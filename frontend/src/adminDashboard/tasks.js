@@ -108,11 +108,11 @@ const Tasks = () => {
         <br />
         <label>
           Task Status:
-          <input
-            type="text"
-            value={taskStatus}
-            onChange={handleTaskStatusChange}
-          />
+            <select value={taskStatus} onChange={handleTaskStatusChange}>
+                    <option value="pending">Pending</option>
+                    <option value="done">Done</option>
+                    <option value="in_progress">In Progress</option>
+            </select>
         </label>
         <br />
         <label>
