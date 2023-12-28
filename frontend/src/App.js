@@ -7,11 +7,13 @@ import {
   Link,
 } from "react-router-dom";
 import Login from "./loginPage/login";
-import Register from "./loginPage/register";
 import UserHomePage from "./userDashboard/home";
 import AdminHomePage from "./adminDashboard/adminHome";
 import axios from "axios";
 import Task from "./adminDashboard/tasks";
+import { ToastContainer } from "react-toastify";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function HomePage({ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin }) {
   const navigate = useNavigate();
@@ -34,6 +36,7 @@ function UserHome({ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin }) {
 }
 
 function App() {
+  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -52,6 +55,19 @@ function App() {
 
   return (
     <div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        maxwidth="100px"
+      />
       <Router>
         <Routes>
           <Route
@@ -66,12 +82,12 @@ function App() {
             }
           />
           <Route path="/dashboard" element={<UserHomePage />} />
-          <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/tasks" element={<Task />} />
           <Route path="/admin" element={<AdminHomePage />} />
         </Routes>
       </Router>
+      
     </div>
   );
 }
