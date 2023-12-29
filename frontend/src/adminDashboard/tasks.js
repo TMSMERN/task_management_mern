@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -20,9 +21,11 @@ const Tasks = () => {
   const handleAssignedToChange = (e) => {
     setAssignedTo(e.target.value);
   };
+
   const handleTaskStatusChange = (e) => {
     setTaskStatus(e.target.value);
   };
+
   const handleDueDateChange = (e) => {
     setDueDate(e.target.value);
   };
@@ -48,27 +51,30 @@ const Tasks = () => {
 
     // Prepare the task data
     const taskData = {
+      assignedTo,
       taskName,
       taskDescription,
       dueDate,
-      subtasks,
+      taskStatus: 'pending',
+      subtasks: subtasks.map((subtask) => ({
+        taskName: subtask.taskName,
+        taskDescription: subtask.taskDescription,
+        dueDate: subtask.dueDate,
+        isMustDo: subtask.isMustDo,
+      })),
     };
-
     // Call the createTask function with the username and the task data
     try {
-      await createTask(assignedTo, taskData);
+      await createTask(taskData);
       console.log("Task created:", taskData);
     } catch (error) {
       console.error("Error creating task:", error);
     }
   };
 
-  const createTask = async (assignedTo, taskData) => {
+  const createTask = async (taskData) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/tasks", {
-        assignedTo,
-        ...taskData,
-      });
+      const response = await axios.post("http://localhost:5000/api/tasks", taskData);
       return response.data;
     } catch (error) {
       console.error("Error creating task:", error);
@@ -76,67 +82,67 @@ const Tasks = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Create Task</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Task Name:
-          <input type="text" value={taskName} onChange={handleTaskNameChange} />
-        </label>
-        <br />
-        <label>
-          Task Description:
-          <textarea
-            value={taskDescription}
-            onChange={handleTaskDescriptionChange}
-          />
-        </label>
-        <br />
-        <label>
-          Assigned To:
-          <input
-            type="text"
-            value={assignedTo}
-            onChange={handleAssignedToChange}
-          />
-        </label>
-        <br />
-        <label>
-          Due Date:
-          <input type="date" value={dueDate} onChange={handleDueDateChange} />
-        </label>
-        <br />
-        <label>
-          Task Status:
-            <select value={taskStatus} onChange={handleTaskStatusChange}>
-                    <option value="pending">Pending</option>
-                    <option value="done">Done</option>
-                    <option value="in_progress">In Progress</option>
-            </select>
-        </label>
-        <br />
-        <label>
-          Subtasks:
-          {subtasks.map((subtask, index) => (
-            <div key={index}>
-              <input
+      <div className="container">
+        <h2>Create Task</h2>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Task Name:
+            <input type="text" value={taskName} onChange={handleTaskNameChange} />
+          </label>
+          <br />
+          <label>
+            Task Description:
+            <textarea
+                value={taskDescription}
+                onChange={handleTaskDescriptionChange}
+            />
+          </label>
+          <br />
+          <label>
+            Assigned To:
+            <input
                 type="text"
-                value={subtask}
-                onChange={(e) => handleSubtaskChange(e, index)}
-              />
-              <button type="button" onClick={() => handleRemoveSubtask(index)}>
-                Remove
-              </button>
-            </div>
-          ))}
-          <button type="button" onClick={handleAddSubtask}>
-            Add Subtask
-          </button>
-        </label>
-        <br />
-        <button type="submit">Create Task</button>
-      </form>
-    </div>
+                value={assignedTo}
+                onChange={handleAssignedToChange}
+            />
+          </label>
+          <br />
+          <label>
+            Due Date:
+            <input type="date" value={dueDate} onChange={handleDueDateChange} />
+          </label>
+          <br />
+          <label>
+            Task Status:
+            <select value={taskStatus} onChange={handleTaskStatusChange}>
+              <option value="pending">Pending</option>
+              <option value="done">Done</option>
+              <option value="in_progress">In Progress</option>
+            </select>
+          </label>
+          <br />
+          <label>
+            Subtasks:
+            {subtasks.map((subtask, index) => (
+                <div key={index}>
+                  <input
+                      type="text"
+                      value={subtask}
+                      onChange={(e) => handleSubtaskChange(e, index)}
+                  />
+                  <button type="button" onClick={() => handleRemoveSubtask(index)}>
+                    Remove
+                  </button>
+                </div>
+            ))}
+            <button type="button" onClick={handleAddSubtask}>
+              Add Subtask
+            </button>
+          </label>
+          <br />
+          <button type="submit">Create Task</button>
+        </form>
+      </div>
   );
 };
 
