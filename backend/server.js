@@ -34,6 +34,19 @@ app.get("/api/users/:username", async (req, res) => {
   }
 });
 
+/* Checking if user is admin or not*/
+app.get("/api/users/:username/isAdmin", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json({ isAdmin: user.isAdmin });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 /* List Users */
 
 /* Creating Tasks */

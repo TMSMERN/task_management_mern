@@ -6,12 +6,13 @@ export const TaskSchema = mongoose.Schema({
   taskDescription: { type: String, required: true },
   dueDate: { type: Date, required: true },
   taskStatus: { type: String,enum: ['pending', 'done', 'in_progress'], required: true },
-  subTasks: [{
+  subTasks: {
     taskName: { type: String, required: true },
     taskDescription: { type: String, required: true },
     dueDate: { type: Date, required: true },
     isMustDo: { type: Boolean, required: true },
-  }],
+  },
 });
+
 
 export const Task = mongoose.model("Task", TaskSchema);

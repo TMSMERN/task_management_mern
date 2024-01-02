@@ -84,7 +84,7 @@ const Login = ({ onLogin }) => {
       toast.success(" Succesfuly registered: " + response.data.firstName);
     } catch (error) {
       console.error("Error registering", error);
-      toast.error("Error registering");
+      toast.error("Error registering: ", error);
     }
   };
 
