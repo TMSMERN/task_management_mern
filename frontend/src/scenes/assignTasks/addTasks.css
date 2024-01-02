@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* full height of the viewport */
+  background-color: navy;
+  color: #00ff00; /* greenish accent */
+}
+
+.task-form {
+  width: 50%; /* half the width of its parent */
+  padding: 20px;
+  border-radius: 10px; /* rounded corners */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* shadow effect */
+  background-color: rgba(255, 255, 255, 0.5); /* half transparent */
+  transition: background-color 0.3s ease; /* transition effect */
+}
+
+.task-form:hover {
+  background-color: rgba(255, 255, 255, 0.8); /* brighter when hovered */
+}
+
+.task-form label,
+.task-form input,
+.task-form textarea,
+.task-form select,
+.task-form button {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.task-form button {
+  background-color: #00ff00; /* greenish accent */
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: navy;
+}
+
+.task-form button:hover {
+  background-color: #00cc00; /* darker green when hovered */
+}

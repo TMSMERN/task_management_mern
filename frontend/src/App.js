@@ -1,94 +1,121 @@
-import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useNavigate,
-  Link,
-} from "react-router-dom";
-import Login from "./loginPage/login";
-import UserHomePage from "./userDashboard/home";
-import AdminHomePage from "./adminDashboard/adminHome";
-import axios from "axios";
-import Task from "./adminDashboard/tasks";
-import { ToastContainer } from "react-toastify";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useReducer } from "react";
+import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import Topbar from "./scenes/global/Topbar";
+import Sidebar from "./scenes/global/Sidebar";
+import Dashboard from "./scenes/dashboard";
+import Team from "./scenes/team";
+import Form from "./scenes/form";
+import Invoices from "./scenes/invoices";
+import Contacts from "./scenes/contacts";
+import Bar from "./scenes/bar";
+import Line from "./scenes/line";
+import Pie from "./scenes/pie";
+import FAQ from "./scenes/faq";
+import Geography from "./scenes/geography";
+import Calendar from "./scenes/calendar/calendar";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { ColorModeContext, useMode } from "./theme";
+import Login from "./login/login";
 
-function HomePage({ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin }) {
-  const navigate = useNavigate();
+const authenticateUser = async (username, password) => {
+  // Replace this with your actual authentication logic
+  // In this example, I'm assuming a successful authentication with a role
+  return { role: "admin" }; // Change 'admin' based on your use case
+};
 
-  if (isLoggedIn) {
-    navigate("/home");
+const USER_ROLES = {
+  ADMIN: "admin",
+  USER: "user",
+};
+
+const initialState = {
+  isLoggedIn: false,
+  isAdmin: false,
+};
+
+const authReducer = (state, action) => {
+  switch (action.type) {
+    case "LOGIN":
+      return {
+        ...state,
+        isLoggedIn: true,
+        isAdmin: action.payload.isAdmin,
+      };
+    case "LOGOUT":
+      return {
+        ...state,
+        isLoggedIn: false,
+        isAdmin: false,
+      };
+    default:
+      return state;
   }
-
-  return <Login />;
-}
-
-function UserHome({ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin }) {
-  const navigate = useNavigate();
-
-  if (!isLoggedIn) {
-    navigate("/");
-  }
-
-  return isAdmin ? <AdminHomePage /> : <UserHomePage />;
-}
+};
 
 function App() {
-  
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [theme, colorMode] = useMode();
+  const [isSidebar, setIsSidebar] = useState(true);
+  const [authState, dispatch] = useReducer(authReducer, initialState);
 
-  const checkIfAdmin = async (username) => {
+  // Function to handle successful login
+  const handleLogin = async (username, password) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/users/${username}`
-      );
-      const isAdmin = response.data.isAdmin;
-      setIsAdmin(isAdmin);
-      setIsLoggedIn(true);
+      // Simulate an API call to authenticate user
+      const response = await authenticateUser(username, password);
+
+      // Assuming the response includes a 'role' field indicating user role (admin or not)
+      const userRole = response.role;
+
+      // Update state based on user role
+      dispatch({
+        type: "LOGIN",
+        payload: { isAdmin: userRole === USER_ROLES.ADMIN },
+      });
+      setIsSidebar(true);
     } catch (error) {
-      console.error("Error checking if user is admin", error);
+      // Handle authentication error
+      console.error("Authentication failed:", error);
     }
   };
 
+  // Function to handle logout (for demonstration purposes)
+  const handleLogout = () => {
+    dispatch({ type: "LOGOUT" });
+    setIsSidebar(false);
+  };
+
   return (
-    <div>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-        maxwidth="100px"
-      />
-      <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <HomePage
-                isLoggedIn={isLoggedIn}
-                setIsLoggedIn={setIsLoggedIn}
-                isAdmin={isAdmin}
-                setIsAdmin={setIsAdmin}
-              />
-            }
-          />
-          <Route path="/dashboard" element={<UserHomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/tasks" element={<Task />} />
-          <Route path="/admin" element={<AdminHomePage />} />
-        </Routes>
-      </Router>
-      
-    </div>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div className="app">
+                <Sidebar isSidebar={isSidebar} />
+                
+                <main className="content">
+                  <Topbar
+                    setIsSidebar={setIsSidebar}
+                    isLoggedIn={authState.isLoggedIn}
+                    onLogout={handleLogout}
+                  />
+                  {/* Display Dashboard directly without any condition or logic */}
+                  <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/team" element={<Team />} />
+                  <Route path="/form" element={<Form />} />
+                  <Route path="/contacts" element={<Contacts />} />
+                  <Route path="/invoices" element={<Invoices />} />
+                  <Route path="/bar" element={<Bar />} />
+                  <Route path="/pie" element={<Pie />} />
+                  <Route path="/line" element={<Line />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/calendar" element={<Calendar />} />
+                  <Route path="/geography" element={<Geography />} />
+                  </Routes>
+                </main>
+        </div>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
 

@@ -1,25 +1,23 @@
-# Dependency directories
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
 /node_modules
+/.pnp
+.pnp.js
 
-# Build output
-/build
-/dist
-
-# Environment variables
-.env
-
-# IDE and editor files
-/.idea
-/.vscode
-*.swp
-*.swo
-
-# Logs
-/logs
-
-# Testing artifacts
+# testing
 /coverage
 
-# Miscellaneous
+# production
+/build
+
+# misc
 .DS_Store
-Thumbs.db
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
