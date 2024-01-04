@@ -1,104 +1,96 @@
 import React, { useState } from "react";
 import "./login.css";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 const Login = ({ onLogin }) => {
-  const [username, setusername] = useState("");
-  const [firstname, setfirstname] = useState("");
-  const [lastname, setlastname] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [active, setActive] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [submitted, setSubmitted] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [emailForgot, setEmailForgot] = useState("");
   const [emailErrorForgot, setEmailErrorForgot] = useState("");
   const [submittedForgot, setSubmittedForgot] = useState(false);
   const [activeForm, setActiveForm] = useState("sign-in");
+  const [username, setUsername] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   /* Login Handler */
-  const onLoginSubmit = async (e) => {
-    e.preventDefault();
+  const onLoginSubmit = async (event) => {
+    event.preventDefault();
 
-    setSubmitted(true);
-    validateEmail();
-    validatePassword();
-
-    if (emailError || passwordError) {
-      return;
-    }
     try {
       const response = await axios.post(
-        "api/login",
+        "http://localhost:5000/api/login",
         {
-          username: email,
-          password: password,
+          username,
+          password,
         },
         {
-          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
 
-      const token = response.data.token;
+      if (response.data.success) {
+        localStorage.setItem("token", response.data.token);
 
-      if (onLogin) {
-        onLogin(token);
+        setUsername(response.data.user);
+        toast.success(
+          "User logged in successfully",
+          response.data.user.username
+        );
+        // And you might want to redirect the user to a different page
+        console.log("User logged in:", username);
+      } else {
+        // If login is not successful, you might want to show an error message
+        setErrorMessage(response.data.message);
+        toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Error logging in", error);
+      // Check the error response from the server and display a user-friendly message
+      if (error.response && error.response.data && error.response.data.error) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage(
+          "An error occurred while logging in. Please try again."
+        );
+      }
     }
   };
 
   /* SignUp Handler */
-  const onRegisterSubmit = async (e) => {
-    e.preventDefault();
+  const onRegisterSubmit = async (event) => {
+    event.preventDefault();
 
-    setSubmitted(true);
-    validateEmail();
-    validatePassword();
+    //validatePassword(password);
 
-    if (emailError || passwordError) {
-      return;
-    }
     try {
-      const response = await axios.post(
-        "api/register",
-        {
-          firstname: firstname,
-          lastname: lastname,
-          username: username,
-          email: email,
-          password: password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-
-      console.log("Registration successful:", response.data);
-
-      setActive(false);
+      const response = await axios.post("http://localhost:5000/api/register", {
+        firstName,
+        lastName,
+        username,
+        email,
+        password,
+      });
+      toast.success(" Succesfuly registered: " + response.data.firstName);
     } catch (error) {
-      console.error("Registration failed:", error);
-    }
-  };
-
-  /* Email Validation */
-  const validateEmailForgot = () => {
-    if (emailForgot.trim() === "") {
-      setEmailErrorForgot("Email is required");
-    } else {
-      setEmailErrorForgot("");
+      console.error("Error registering", error);
+      toast.error("Error registering: ", error);
     }
   };
 
   const onForgotSubmit = (e) => {
     e.preventDefault();
     setSubmittedForgot(true);
-    validateEmailForgot();
 
     if (emailErrorForgot === "") {
       // Check if the email is valid
@@ -107,46 +99,11 @@ const Login = ({ onLogin }) => {
         setEmailErrorForgot("Invalid email format");
         return;
       }
-
       // Send email to the user's registered email address
       console.log("Email sent to user's registered email address!");
+      toast.success("Email sent to user's registered email address!");
       setActive(false); // Switch back to the "Sign In" form after submitting forgot password
       setActiveForm("sign-in");
-    }
-  };
-
-  /* Validations Handler */
-  const validateEmail = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!email) {
-      setEmailError("Email is required");
-    } else if (!emailRegex.test(email)) {
-      setEmailError("Invalid email format");
-    } else {
-      setEmailError("");
-    }
-  };
-
-  const validatePassword = () => {
-    if (!password) {
-      setPasswordError("Password is required");
-    } else if (password.length < 8) {
-      setPasswordError("Password must be 8 characters or longer");
-    } else if (!/[A-Z]/.test(password)) {
-      setPasswordError("Password must contain at least one uppercase letter");
-    } else if (!/[\W_]/.test(password)) {
-      setPasswordError("Password must contain at least one special character");
-    } else {
-      setPasswordError("");
-    }
-  };
-
-  const validateConfirmPassword = () => {
-    if (password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match");
-    } else {
-      setConfirmPasswordError("");
     }
   };
 
@@ -175,7 +132,7 @@ const Login = ({ onLogin }) => {
           }`}
         >
           <form>
-            <h1 style={{ color: "#555" }}>Create Account</h1>
+            <h1 style={{ color: "black" }}>Create Account</h1>
             <div className="social-icons">
               <a href="/" className="icon">
                 <i className="fab fa-facebook-f"></i>
@@ -190,53 +147,37 @@ const Login = ({ onLogin }) => {
                 <i className="fab fa-linkedin-in"></i>
               </a>
             </div>
-            <span>or use your e-mail for registration</span>
+            <span style={{ color: "grey" }}>or use your e-mail for registration</span>
             <input
-              type="FirstName"
+              type="text"
               placeholder="First Name"
-              onChange={(e) => setfirstname(e.target.value)}
+              onChange={(e) => setFirstName(e.target.value)}
             />
-            <p style={{ color: "red" }} className="error-message">
-              {emailError}
-            </p>
             <input
-              type="LastName"
+              type="text"
               placeholder="Last Name"
-              onChange={(e) => setlastname(e.target.value)}
+              onChange={(e) => setLastName(e.target.value)}
             />
-            <p style={{ color: "red" }} className="error-message">
-              {emailError}
-            </p>
             <input
-              type="UserName"
-              placeholder="User Name"
-              onChange={(e) => setusername(e.target.value)}
+              type="text"
+              placeholder="Username"
+              onChange={(e) => setUsername(e.target.value)}
             />
             <input
               type="email"
               placeholder="E-mail"
-              onBlur={() => submitted && validateEmail()}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <p style={{ color: "red" }} className="error-message">
-              {emailError}
-            </p>
             <input
               type="password"
               placeholder="Password"
-              onBlur={() => submitted && validatePassword()}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <p style={{ color: "red" }} className="error-message">
-              {passwordError}
-            </p>
             <input
               type="password"
               placeholder="Confirm Password"
-              onBlur={() => submitted && validateConfirmPassword()}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
-            <p className="error-message">{confirmPasswordError}</p>
             <button onClick={onRegisterSubmit} type="submit">
               Sign Up
             </button>
@@ -248,7 +189,7 @@ const Login = ({ onLogin }) => {
           }`}
         >
           <form>
-            <h1 style={{ color: "#555" }}>Sign In</h1>
+            <h1 style={{ color: "black" }}>Sign In</h1>
             <div className="social-icons">
               <a href="/" className="icon">
                 <i className="fab fa-facebook-f"></i>
@@ -263,12 +204,11 @@ const Login = ({ onLogin }) => {
                 <i className="fab fa-linkedin-in"></i>
               </a>
             </div>
-            <span>or use your e-mail</span>
+            <span style={{ color: "grey" }}>or use your Username</span>
             <input
-              type="email"
-              placeholder="E-mail"
-              onBlur={() => submitted && validateEmail()}
-              onChange={(e) => setEmail(e.target.value)}
+              type="username"
+              placeholder="Username"
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
             <p style={{ color: "red" }} className="error-message">
@@ -277,13 +217,9 @@ const Login = ({ onLogin }) => {
             <input
               type="password"
               placeholder="Password"
-              onBlur={() => submitted && validatePassword()}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <p style={{ color: "red" }} className="error-message">
-              {passwordError}
-            </p>
             <a
               href="/"
               onClick={(e) => {
@@ -308,13 +244,9 @@ const Login = ({ onLogin }) => {
             <input
               type="email"
               placeholder="E-mail"
-              onBlur={() => submittedForgot && validateEmailForgot()}
               onChange={(e) => setEmailForgot(e.target.value)}
               required
             />
-            <p style={{ color: "red" }} className="error-message">
-              {emailErrorForgot}
-            </p>
             <button onClick={handleLoginClick} type="button">
               Reset Password
             </button>

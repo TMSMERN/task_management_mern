@@ -59,7 +59,14 @@ app.post("/api/tasks", async (req, res) => {
     res.status(400).send(error);
   }
 });
-
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 /* List Tasks */
 app.get("/api/tasks", async (req, res) => {
   try {

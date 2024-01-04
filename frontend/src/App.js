@@ -17,7 +17,8 @@ import Calendar from "./scenes/calendar/calendar";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import Login from "./login/login";
-
+import Tasks from "./scenes/assignTasks/assignTasks";
+import  ShowTeam  from "./scenes/team/team";
 const authenticateUser = async (username, password) => {
   // Replace this with your actual authentication logic
   // In this example, I'm assuming a successful authentication with a role
@@ -101,7 +102,11 @@ function App() {
                   {/* Display Dashboard directly without any condition or logic */}
                   <Routes>
                   <Route path="/" element={<Dashboard />} />
+                  <Route path="/login" element={<Login onLogin={handleLogin} />} />
+                  {/*<Route path="/assigntasks" element={<AssignTasks />} />*/}
+                  <Route path="/tasks" element={<Tasks />} />
                   <Route path="/team" element={<Team />} />
+                  <Route path="/showteam" element={<ShowTeam />} />
                   <Route path="/form" element={<Form />} />
                   <Route path="/contacts" element={<Contacts />} />
                   <Route path="/invoices" element={<Invoices />} />
