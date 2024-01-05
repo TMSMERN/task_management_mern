@@ -16,6 +16,9 @@ import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import AddTaskOutlinedIcon from '@mui/icons-material/AddTaskOutlined';
+import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
+import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -133,9 +136,9 @@ const Sidebar = () => {
               Data
             </Typography>
             <Item
-              title="Manage Team"
+              title="Team"
               to="/team"
-              icon={<PeopleOutlinedIcon />}
+              icon={<GroupsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -171,13 +174,20 @@ const Sidebar = () => {
             <Item
               title="Assign Tasks"
               to="/tasks"
-              icon={<PeopleOutlinedIcon />}
+              icon={<AddTaskOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Add New Member"
               to="/form"
+              icon={<GroupAddOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Profile"
+              to="/myprofile"
               icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

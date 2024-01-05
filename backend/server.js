@@ -48,7 +48,35 @@ app.get("/api/users/:username/isAdmin", async (req, res) => {
   }
 });
 /* List Users */
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
+app.get("/api/myprofile", async (req, res) => {
+  try {
+    // Extract the userId from the JWT in the Authorization header
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, "your-secret-key");
+    const userId = decoded.userId;
+
+    // Find the user by their userId
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Send the user's information as a JSON response
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 /* Creating Tasks */
 app.post("/api/tasks", async (req, res) => {
   try {
@@ -59,14 +87,7 @@ app.post("/api/tasks", async (req, res) => {
     res.status(400).send(error);
   }
 });
-app.get('/api/users', async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+
 /* List Tasks */
 app.get("/api/tasks", async (req, res) => {
   try {

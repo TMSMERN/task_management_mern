@@ -18,7 +18,9 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import Login from "./login/login";
 import Tasks from "./scenes/assignTasks/assignTasks";
-import  ShowTeam  from "./scenes/team/team";
+import ShowTeam from "./scenes/team/team";
+import Profile from "./scenes/profile/profile";
+
 const authenticateUser = async (username, password) => {
   // Replace this with your actual authentication logic
   // In this example, I'm assuming a successful authentication with a role
@@ -91,33 +93,47 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-                <Sidebar isSidebar={isSidebar} />
-                
-                <main className="content">
-                  <Topbar
-                    setIsSidebar={setIsSidebar}
-                    isLoggedIn={authState.isLoggedIn}
-                    onLogout={handleLogout}
-                  />
-                  {/* Display Dashboard directly without any condition or logic */}
-                  <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/login" element={<Login onLogin={handleLogin} />} />
-                  {/*<Route path="/assigntasks" element={<AssignTasks />} />*/}
-                  <Route path="/tasks" element={<Tasks />} />
-                  <Route path="/team" element={<Team />} />
-                  <Route path="/showteam" element={<ShowTeam />} />
-                  <Route path="/form" element={<Form />} />
-                  <Route path="/contacts" element={<Contacts />} />
-                  <Route path="/invoices" element={<Invoices />} />
-                  <Route path="/bar" element={<Bar />} />
-                  <Route path="/pie" element={<Pie />} />
-                  <Route path="/line" element={<Line />} />
-                  <Route path="/faq" element={<FAQ />} />
-                  <Route path="/calendar" element={<Calendar />} />
-                  <Route path="/geography" element={<Geography />} />
-                  </Routes>
-                </main>
+          <Sidebar isSidebar={isSidebar} />
+
+          <main className="content">
+            <Topbar
+              setIsSidebar={setIsSidebar}
+              isLoggedIn={authState.isLoggedIn}
+              onLogout={handleLogout}
+            />
+            
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/login" element={<Login onLogin={handleLogin} />} />
+
+              {/* Conditionally render admin or user routes based on the role */}
+              {authState.isAdmin ? (
+                <>
+                  <Route path="/admin/tasks" element={<Tasks />} />
+                  <Route path="/admin/team" element={<Team />} />
+                  {/* Add other admin routes as needed */}
+                </>
+              ) : (
+                <>
+                  <Route path="/user/tasks" element={<Tasks />} />
+                  <Route path="/user/team" element={<Team />} />
+                  {/* Add other user routes as needed */}
+                </>
+              )}
+
+              {/* Common routes for both admin and user */}
+              <Route path="/myprofile" element={<Profile />} />
+              <Route path="/form" element={<Form />} />
+              <Route path="/contacts" element={<Contacts />} />
+              <Route path="/invoices" element={<Invoices />} />
+              <Route path="/bar" element={<Bar />} />
+              <Route path="/pie" element={<Pie />} />
+              <Route path="/line" element={<Line />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/geography" element={<Geography />} />
+            </Routes>
+          </main>
         </div>
       </ThemeProvider>
     </ColorModeContext.Provider>
