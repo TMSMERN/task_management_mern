@@ -329,6 +329,7 @@ const taskSchema = yup.object().shape({
 });
 
 const SubTaskSchema = yup.object().shape({
+  taskId: yup.string().required("Task ID is required"),
   subTaskName: yup.string().required("Subtask name is required"),
   subTaskDescription: yup.string().required("Subtask description is required"),
   subTaskDueDate: yup.date().required("Subtask due date is required"),
