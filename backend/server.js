@@ -6,6 +6,7 @@ import { User } from "./models/userModel.js";
 import jwt from "jsonwebtoken";
 //import bcrypt from "bcrypt";
 import { Task } from "./models/taskModel.js";
+import { SubTask } from './models/subTaskModel.js';
 
 const app = express();
 
@@ -88,6 +89,27 @@ app.post("/api/tasks", async (req, res) => {
   }
 });
 
+app.post('/api/tasks/:taskId/subtasks', async (req, res) => {
+  try {
+    const { name, description, dueDate, isDone } = req.body;
+    const subTask = new SubTask({
+      name,
+      description,
+      dueDate,
+      isDone,
+    });
+
+    await subTask.save();
+
+    const task = await Task.findById(req.params.task._Id);
+    task.subTasks.push(subTask);
+    await task.save();
+
+    res.status(201).json(subTask);
+  } catch (error) {
+    res.status(500).json({ error: error.toString() });
+  }
+});
 /* List Tasks */
 app.get("/api/tasks", async (req, res) => {
   try {

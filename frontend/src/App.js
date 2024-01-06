@@ -20,11 +20,14 @@ import Login from "./login/login";
 import Tasks from "./scenes/assignTasks/assignTasks";
 import ShowTeam from "./scenes/team/team";
 import Profile from "./scenes/profile/profile";
+import UserSidebar from "./scenes/global/UserSidebar";
+import { Toast, ToastContainer } from "react-toastify";
+import MyTasks from "./scenes/mytasks/myTasks";
 
 const authenticateUser = async (username, password) => {
   // Replace this with your actual authentication logic
   // In this example, I'm assuming a successful authentication with a role
-  return { role: "admin" }; // Change 'admin' based on your use case
+  return { role: "user" }; // Change 'admin' based on your use case
 };
 
 const USER_ROLES = {
@@ -33,7 +36,7 @@ const USER_ROLES = {
 };
 
 const initialState = {
-  isLoggedIn: false,
+  isLoggedIn: true,
   isAdmin: false,
 };
 
@@ -93,7 +96,13 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          <Sidebar isSidebar={isSidebar} />
+          {authState.isLoggedIn ? (
+            authState.isAdmin ? (
+              <Sidebar isSidebar={isSidebar} />
+            ) : (
+              <UserSidebar isSidebar={isSidebar} />
+            )
+          ) : null}
 
           <main className="content">
             <Topbar
@@ -101,10 +110,9 @@ function App() {
               isLoggedIn={authState.isLoggedIn}
               onLogout={handleLogout}
             />
-            
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/login" element={<Login onLogin={handleLogin} />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/" element={<Login onLogin={handleLogin} />} />
 
               {/* Conditionally render admin or user routes based on the role */}
               {authState.isAdmin ? (
@@ -122,6 +130,9 @@ function App() {
               )}
 
               {/* Common routes for both admin and user */}
+              <Route path="/mytasks" element={<MyTasks />} />
+              <Route path="/team" element={<ShowTeam />} />
+              <Route path="/tasks" element={<Tasks />} />
               <Route path="/myprofile" element={<Profile />} />
               <Route path="/form" element={<Form />} />
               <Route path="/contacts" element={<Contacts />} />

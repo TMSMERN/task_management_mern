@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 
-const Login = ({ onLogin }) => {
+const Login = ({ dispatch }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -41,7 +41,7 @@ const Login = ({ onLogin }) => {
 
       if (response.data.success) {
         localStorage.setItem("token", response.data.token);
-
+        
         setUsername(response.data.user);
         toast.success(
           "User logged in successfully",
@@ -63,6 +63,7 @@ const Login = ({ onLogin }) => {
         setErrorMessage(
           "An error occurred while logging in. Please try again."
         );
+        toast.error("An error occurred while logging in. Please try again.");
       }
     }
   };
@@ -147,7 +148,9 @@ const Login = ({ onLogin }) => {
                 <i className="fab fa-linkedin-in"></i>
               </a>
             </div>
-            <span style={{ color: "grey" }}>or use your e-mail for registration</span>
+            <span style={{ color: "grey" }}>
+              or use your e-mail for registration
+            </span>
             <input
               type="text"
               placeholder="First Name"

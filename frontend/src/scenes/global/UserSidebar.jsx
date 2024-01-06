@@ -80,7 +80,7 @@ const UserSidebar = () => {
                 ml="15px"
               >
                 <Typography variant="h3" color={colors.grey[100]}>
-                  ADMIN
+                  User
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />
@@ -133,12 +133,20 @@ const UserSidebar = () => {
               Data
             </Typography>
             <Item
+              title="Profile"
+              to="/myprofile"
+              icon={<PersonOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
               title="Team"
               to="/myteam"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
+            
             <Item
               title="Contacts Information"
               to="/contacts"
@@ -153,7 +161,6 @@ const UserSidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-
             <Typography
               variant="h6"
               color={colors.grey[300]}
@@ -163,7 +170,7 @@ const UserSidebar = () => {
             </Typography>
             <Item
               title="My Tasks"
-              to="/task"
+              to="/mytasks"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

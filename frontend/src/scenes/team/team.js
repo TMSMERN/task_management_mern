@@ -43,9 +43,7 @@ const ShowTeam = () => {
             display="flex"
             justifyContent="center"
             backgroundColor={
-              isAdmin
-                ? colors.greenAccent[600]
-                : colors.greenAccent[700]
+              isAdmin ? colors.greenAccent[600] : colors.greenAccent[700]
             }
             borderRadius="4px"
           >
@@ -105,7 +103,12 @@ const ShowTeam = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={users} columns={columns} />
+        <DataGrid
+          checkboxSelection
+          rows={users}
+          columns={columns}
+          getRowId={(row) => row._id}
+        />
       </Box>
     </Box>
   );
