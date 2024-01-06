@@ -55,6 +55,7 @@ const AssignTask = () => {
           "http://localhost:5000/api/tasks",
           values
       );
+      console.log("task Form Values:", values);
       toast.success("Successfully added task: " + response.data.taskName);
       console.log("Task added successfully");
     } catch (error) {
@@ -65,16 +66,28 @@ const AssignTask = () => {
 
   const handleSubTaskFormSubmit = async (values) => {
     try {
+      // Add the ID of the selected task (parentTaskId) to the request body
+      const subtaskPayload = {
+        taskName: values.subTaskName,
+        taskDescription: values.subTaskDescription,
+        dueDate: values.subTaskDueDate,
+        isDone: values.isDone,
+      };
+
+
+      console.log("Subtask Form Values:", subtaskPayload);
       const response = await axios.post(
           `http://localhost:5000/api/tasks/${selectedTaskId}/subtasks`,
-          values
+          subtaskPayload
       );
-      toast.success("Successfully added subtask: " + response.data.subTaskName);
+
+      toast.success("Successfully added subtask: " + response.data.taskName);
     } catch (error) {
       console.error("Error adding subtask", error);
-      toast.error("Error adding subtask", error);
+      toast.error("Error adding subtask");
     }
   };
+
 
   const taskSchema = yup.object().shape({
     taskName: yup.string().required("Task Name is required"),

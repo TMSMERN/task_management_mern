@@ -91,17 +91,18 @@ app.post("/api/tasks", async (req, res) => {
 
 app.post('/api/tasks/:taskId/subtasks', async (req, res) => {
   try {
-    const { name, description, dueDate, isDone } = req.body;
+    const { taskName, taskDescription, dueDate, isDone } = req.body; // Fix destructuring to match schema properties
     const subTask = new SubTask({
-      name,
-      description,
+      parentTask: req.params.taskId, // Use taskId from the URL parameters
+      taskName,
+      taskDescription,
       dueDate,
       isDone,
     });
 
     await subTask.save();
 
-    const task = await Task.findById(req.params.task._Id);
+    const task = await Task.findById(req.params.taskId); // Fix typo in taskId
     task.subTasks.push(subTask);
     await task.save();
 
