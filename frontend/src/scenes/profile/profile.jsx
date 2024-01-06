@@ -9,16 +9,21 @@ const useStyles = makeStyles({
     display: "flex",
     justifyContent: "center",
     margin: "16px",
+    backgroundColor: "transparent", // light grey background
   },
   profilePaper: {
     padding: "16px",
     width: "50%",
+    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // add a subtle shadow
   },
   profileTitle: {
     marginBottom: "12px",
+    color: "#3f51b5", // change the title color
+    borderBottom: "2px solid #3f51b5", // add a bottom border to the title
   },
   profileItem: {
     marginBottom: "8px",
+    color: "#616161", // change the item color
   },
 });
 
