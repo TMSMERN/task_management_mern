@@ -37,7 +37,7 @@ const USER_ROLES = {
 
 const initialState = {
   isLoggedIn: true,
-  isAdmin: false,
+  isAdmin: true,
 };
 
 const authReducer = (state, action) => {
