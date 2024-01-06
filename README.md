@@ -20,10 +20,10 @@ To run the Task Management System locally, follow these steps:
 
 
 
-1. Navigate to the frontend folder and install dependencies and start the frontend server:
+2. Navigate to the frontend folder and install dependencies and start the frontend server:
    ```bash
     cd frontend
-    npm install
+    npm install --legacy-peer-deps
     npm start
 
 Visit http://localhost:3000 in your browser to access the Task Management System.
