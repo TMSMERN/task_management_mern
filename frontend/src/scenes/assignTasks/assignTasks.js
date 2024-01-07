@@ -270,7 +270,7 @@ const AssignTask = () => {
                                 >
                                     {tasks.map((task) => (
                                         <MenuItem key={task._id} value={task._id}>
-                                            { task.assignedTo.username + "'s Task: " + task.taskName }
+                                            { task.assignedTo ? task.assignedTo.firstName+ " "+task.assignedTo.lastName + "'s Task: " + task.taskName : "Unassigned Task: " + task.taskName }
                                         </MenuItem>
                                     ))}
                                 </Select>

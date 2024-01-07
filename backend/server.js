@@ -143,6 +143,52 @@ app.get("/api/tasks/:taskId/subtasks", async (req, res) => {
   }
 });
 
+/* Update Tasks */
+app.put("/api/tasks/:taskId/status", async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.taskId);
+    if (!task) {
+      return res.status(404).send({ message: "Task not found" });
+    }
+
+    // Update the status of the task
+    task.status = req.body.status;
+
+    await task.save();
+
+    res.send(task);
+  } catch (error) {
+    console.error("Error updating task status:", error);
+    res.status(500).send({ message: "Error updating task status" });
+  }
+});
+
+app.put("/api/tasks/:taskId/subtasks/:subtaskId/toggle", async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.taskId);
+    if (!task) {
+      return res.status(404).send({ message: "Task not found" });
+    }
+
+    const subtask = task.subTasks.find(
+      (subtask) => subtask._id.toString() === req.params.subtaskId
+    );
+    if (!subtask) {
+      return res.status(404).send({ message: "Subtask not found" });
+    }
+
+    // Toggle the isDone status of the subtask
+    subtask.isDone = !subtask.isDone;
+
+    await task.save();
+
+    res.send(task);
+  } catch (error) {
+    console.error("Error toggling subtask:", error);
+    res.status(500).send({ message: "Error toggling subtask" });
+  }
+});
+
 app.post("/api/login", async (req, res) => {
   try {
     const { username, password } = req.body;
