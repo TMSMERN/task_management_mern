@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import "./login.css";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 
-const Login = ({ dispatch }) => {
+const Login = ({ onLogin }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -40,12 +40,11 @@ const Login = ({ dispatch }) => {
       );
 
       if (response.data.success) {
+        const decodedToken = jwtDecode(response.data.token);
         localStorage.setItem("token", response.data.token);
-        
-        setUsername(response.data.user);
+        onLogin(response.data.token);
         toast.success(
-          "User logged in successfully",
-          response.data.user.username
+          "User logged in successfully: " + response.data.user.username
         );
         // And you might want to redirect the user to a different page
         console.log("User logged in:", username);
@@ -126,6 +125,7 @@ const Login = ({ dispatch }) => {
 
   return (
     <div>
+      <ToastContainer />
       <div className={`container ${active ? "active" : ""}`} id="container">
         <div
           className={`form-container sign-up ${

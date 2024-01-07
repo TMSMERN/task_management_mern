@@ -17,7 +17,7 @@ import {
     Button,
 } from '@mui/material';
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 
 const MyTasks = () => {
     const [tasks, setTasks] = useState([]);
@@ -26,16 +26,18 @@ const MyTasks = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/tasks');
-                setTasks(response.data);
-            } catch (error) {
-                console.error('Error fetching tasks:', error);
-            }
+          try {
+            const token = localStorage.getItem('token');
+            const decodedToken = jwtDecode(token);
+            const response = await axios.get(`http://localhost:5000/api/tasks/${decodedToken.userId}`);
+            setTasks(response.data);
+          } catch (error) {
+            console.error('Error fetching tasks:', error);
+          }
         };
-
+      
         fetchData();
-    }, []);
+      }, []);
 
     const fetchSubtasks = async (taskId) => {
         try {

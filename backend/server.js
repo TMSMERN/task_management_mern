@@ -6,7 +6,7 @@ import { User } from "./models/userModel.js";
 import jwt from "jsonwebtoken";
 //import bcrypt from "bcrypt";
 import { Task } from "./models/taskModel.js";
-import { SubTask } from './models/subTaskModel.js';
+import { SubTask } from "./models/subTaskModel.js";
 
 const app = express();
 
@@ -49,7 +49,7 @@ app.get("/api/users/:username/isAdmin", async (req, res) => {
   }
 });
 /* List Users */
-app.get('/api/users', async (req, res) => {
+app.get("/api/users", async (req, res) => {
   try {
     const users = await User.find({});
     res.json(users);
@@ -89,7 +89,7 @@ app.post("/api/tasks", async (req, res) => {
   }
 });
 
-app.post('/api/tasks/:taskId/subtasks', async (req, res) => {
+app.post("/api/tasks/:taskId/subtasks", async (req, res) => {
   try {
     const { taskName, taskDescription, dueDate, isDone } = req.body; // Fix destructuring to match schema properties
     const subTask = new SubTask({
@@ -114,20 +114,32 @@ app.post('/api/tasks/:taskId/subtasks', async (req, res) => {
 /* List Tasks */
 app.get("/api/tasks", async (req, res) => {
   try {
-    const tasks = await Task.find({});
+    const tasks = await Task.find().populate("assignedTo");
     res.status(200).json(tasks);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Something went wrong" });
   }
 });
-app.get('/api/tasks/:taskId/subtasks', async (req, res) => {
+
+app.get("/api/tasks/:userId", async (req, res) => {
+  try {
+    const tasks = await Task.find({ assignedTo: req.params.userId }).populate(
+      "assignedTo"
+    );
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.toString() });
+  }
+});
+
+app.get("/api/tasks/:taskId/subtasks", async (req, res) => {
   try {
     const subtasks = await SubTask.find({ parentTask: req.params.taskId });
     res.status(200).json(subtasks);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Something went wrong' });
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
 
@@ -143,15 +155,19 @@ app.post("/api/login", async (req, res) => {
 
     // Check the password
     //const validPassword = await bcrypt.compare(password, user.password);
-    if (!password) {
-      return res.status(400).json({ error: "Invalid username or passworddd" });
+    if (user.password !== password) {
+      return res.status(400).json({ error: "Invalid username or password" });
     }
 
     console.log("User logged in:", user);
     // The username and password are valid, so you can start a session or issue a JWT
-    const token = jwt.sign({ userId: user._id }, "your-secret-key", {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { userId: user.id, username: user.username, isAdmin: user.isAdmin },
+      "your-secret-key",
+      {
+        expiresIn: "1h",
+      }
+    );
     return res.json({ success: true, user, token });
     // ...
   } catch (error) {

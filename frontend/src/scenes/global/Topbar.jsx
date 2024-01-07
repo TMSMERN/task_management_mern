@@ -8,12 +8,24 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
+import LogoutTwoToneIcon from "@mui/icons-material/LogoutTwoTone";
 
 const Topbar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    // Redirect to login page or wherever you want to redirect after logout
+    window.location = '/';
+  };
+
+  const handleProfile = () => {
+    // Redirect to profile page or wherever you want to redirect after logout
+    window.location = '/myprofile';
+  }
+  
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
       {/* SEARCH BAR */}
@@ -44,7 +56,10 @@ const Topbar = () => {
           <SettingsOutlinedIcon />
         </IconButton>
         <IconButton>
-          <PersonOutlinedIcon />
+          <PersonOutlinedIcon onClick={handleProfile}/>
+        </IconButton>
+        <IconButton>
+          <LogoutTwoToneIcon onClick={handleLogout} />
         </IconButton>
       </Box>
     </Box>

@@ -14,7 +14,7 @@ import {
     InputLabel,
 } from "@mui/material";
 import { Formik } from "formik";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as yup from "yup";
 
@@ -102,6 +102,7 @@ const AssignTask = () => {
 
     return (
         <Box sx={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+            <ToastContainer />
             {/* Main Task Form */}
             <Formik
                 initialValues={{
@@ -269,7 +270,7 @@ const AssignTask = () => {
                                 >
                                     {tasks.map((task) => (
                                         <MenuItem key={task._id} value={task._id}>
-                                            {task.taskName}
+                                            { task.assignedTo.username + "'s Task: " + task.taskName }
                                         </MenuItem>
                                     ))}
                                 </Select>

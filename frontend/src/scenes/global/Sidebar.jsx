@@ -19,6 +19,9 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import AddTaskOutlinedIcon from '@mui/icons-material/AddTaskOutlined';
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
+import { jwtDecode } from 'jwt-decode';
+
+
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -110,7 +113,7 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Kevin Smith
+                  K
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   Task Management System Admin
@@ -144,7 +147,7 @@ const Sidebar = () => {
             />
             <Item
               title="Manage Team"
-              to="/showteam"
+              to="/myteam"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

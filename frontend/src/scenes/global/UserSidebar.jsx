@@ -107,7 +107,7 @@ const UserSidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                 User Name
+                  User Name
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   Task Management System User
@@ -146,21 +146,6 @@ const UserSidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            
-            <Item
-              title="Contacts Information"
-              to="/contacts"
-              icon={<ContactsOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Invoices Balances"
-              to="/invoices"
-              icon={<ReceiptOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
             <Typography
               variant="h6"
               color={colors.grey[300]}
@@ -174,7 +159,7 @@ const UserSidebar = () => {
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />       
+            />
             <Item
               title="Calendar"
               to="/calendar"
