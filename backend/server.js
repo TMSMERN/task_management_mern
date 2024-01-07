@@ -121,6 +121,15 @@ app.get("/api/tasks", async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
+app.get('/api/tasks/:taskId/subtasks', async (req, res) => {
+  try {
+    const subtasks = await SubTask.find({ parentTask: req.params.taskId });
+    res.status(200).json(subtasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+});
 
 app.post("/api/login", async (req, res) => {
   try {
