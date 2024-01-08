@@ -23,7 +23,7 @@ const Topbar = () => {
 
   const handleProfile = () => {
     // Redirect to profile page or wherever you want to redirect after logout
-    window.location = '/myprofile';
+    window.location = '/profile';
   }
   
   return (

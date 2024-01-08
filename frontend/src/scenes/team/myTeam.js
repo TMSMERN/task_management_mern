@@ -9,12 +9,11 @@ import Header from "../../components/Header";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const Team = () => {
+const ShowTeam = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [users, setUsers] = useState([]);
   const columns = [
-    { field: "_id", headerName: "ID" },
     {
       field: "firstName",
       headerName: "First Name",
@@ -104,7 +103,7 @@ const Team = () => {
         }}
       >
         <DataGrid
-          checkboxSelection
+          
           rows={users}
           columns={columns}
           getRowId={(row) => row._id}
@@ -114,4 +113,4 @@ const Team = () => {
   );
 };
 
-export default Team;
+export default ShowTeam;

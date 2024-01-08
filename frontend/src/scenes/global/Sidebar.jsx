@@ -113,7 +113,7 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  K
+                  Kevin Smith
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   Task Management System Admin
@@ -139,15 +139,8 @@ const Sidebar = () => {
               Data
             </Typography>
             <Item
-              title="Team"
-              to="/team"
-              icon={<GroupsOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
               title="Manage Team"
-              to="/myteam"
+              to="/team"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -190,7 +183,7 @@ const Sidebar = () => {
             />
             <Item
               title="Profile"
-              to="/myprofile"
+              to="/profile"
               icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -202,14 +195,6 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
-              title="FAQ Page"
-              to="/faq"
-              icon={<HelpOutlineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
             <Typography
               variant="h6"
               color={colors.grey[300]}

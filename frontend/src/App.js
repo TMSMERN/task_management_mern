@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
-import Team from "./scenes/team";
+import Team from "./scenes/team/team";
 import Form from "./scenes/form";
 import Invoices from "./scenes/invoices";
 import Contacts from "./scenes/contacts";
@@ -18,7 +18,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import Login from "./login/login";
 import Tasks from "./scenes/assignTasks/assignTasks";
-import ShowTeam from "./scenes/team/team";
+import ShowTeam from "./scenes/team/myTeam";
 import Profile from "./scenes/profile/profile";
 import UserSidebar from "./scenes/global/UserSidebar";
 import { Toast, ToastContainer } from "react-toastify";
@@ -82,7 +82,7 @@ function App() {
                 <Route path="/mytasks" element={<MyTasks />} />
                 <Route path="/myteam" element={<ShowTeam />} />
                 <Route path="/tasks" element={<Tasks />} />
-                <Route path="/myprofile" element={<Profile />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="/form" element={<Form />} />
                 <Route path="/contacts" element={<Contacts />} />
                 <Route path="/invoices" element={<Invoices />} />

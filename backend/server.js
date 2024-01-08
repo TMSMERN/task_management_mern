@@ -121,7 +121,21 @@ app.get("/api/tasks", async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
-
+app.get("/api/subtasks/:subtaskId", async (req, res) => {
+  try {
+    const task = await Task.findOne(
+      { "subTasks._id": req.params.subtaskId },
+      { "subTasks.$": 1 }
+    );
+    if (!task || !task.subTasks || task.subTasks.length === 0) {
+      return res.status(404).send({ message: "Subtask not found" });
+    }
+    res.send(task.subTasks[0]);
+  } catch (error) {
+    console.error("Error fetching subtask:", error);
+    res.status(500).send({ message: "Error fetching subtask" });
+  }
+});
 app.get("/api/tasks/:userId", async (req, res) => {
   try {
     const tasks = await Task.find({ assignedTo: req.params.userId }).populate(
@@ -162,7 +176,36 @@ app.put("/api/tasks/:taskId/status", async (req, res) => {
     res.status(500).send({ message: "Error updating task status" });
   }
 });
+app.get("/api/subtasks/:subtaskId", async (req, res) => {
+  try {
+    const subtask = await Subtask.findById(req.params.subtaskId);
+    if (!subtask) {
+      return res.status(404).send({ message: "Subtask not found" });
+    }
+    res.send(subtask);
+  } catch (error) {
+    console.error("Error fetching subtask:", error);
+    res.status(500).send({ message: "Error fetching subtask" });
+  }
+});
+app.put("/api/subtasks/:subtaskId", async (req, res) => {
+  try {
+    const subtask = await Subtask.findById(req.params.subtaskId);
+    if (!subtask) {
+      return res.status(404).send({ message: "Subtask not found" });
+    }
 
+    // Update the subtask with the data in the request body
+    subtask.isDone = req.body.isDone;
+
+    await subtask.save();
+
+    res.send(subtask);
+  } catch (error) {
+    console.error("Error updating subtask:", error);
+    res.status(500).send({ message: "Error updating subtask" });
+  }
+});
 app.put("/api/tasks/:taskId/subtasks/:subtaskId/toggle", async (req, res) => {
   try {
     const task = await Task.findById(req.params.taskId);
@@ -171,7 +214,7 @@ app.put("/api/tasks/:taskId/subtasks/:subtaskId/toggle", async (req, res) => {
     }
 
     const subtask = task.subTasks.find(
-      (subtask) => subtask._id.toString() === req.params.subtaskId
+      (subtask) => subtask.id.toString() === req.params.subtaskId
     );
     if (!subtask) {
       return res.status(404).send({ message: "Subtask not found" });

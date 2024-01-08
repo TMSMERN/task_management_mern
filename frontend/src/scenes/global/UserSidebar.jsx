@@ -134,7 +134,7 @@ const UserSidebar = () => {
             </Typography>
             <Item
               title="Profile"
-              to="/myprofile"
+              to="/profile"
               icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
