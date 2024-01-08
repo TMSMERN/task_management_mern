@@ -1,6 +1,6 @@
 import React, { useReducer } from "react";
 import { useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
@@ -21,7 +21,7 @@ import Tasks from "./scenes/assignTasks/assignTasks";
 import ShowTeam from "./scenes/team/myTeam";
 import Profile from "./scenes/profile/profile";
 import UserSidebar from "./scenes/global/UserSidebar";
-import { Toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import MyTasks from "./scenes/mytasks/myTasks";
 import { jwtDecode } from "jwt-decode";
 
@@ -32,7 +32,7 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       const decodedToken = jwtDecode(token);
       setIsLoggedIn(true);
@@ -50,8 +50,20 @@ function App() {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     setIsAdmin(false);
-    window.location = '/login';
+    window.location = "/login";
   };
+  function PrivateRoute({ children, isLoggedIn, isAdmin }) {
+    const navigate = useNavigate();
+
+
+    useEffect(() => {
+      if (!isAdmin) {
+        toast.error("You are not authorized to view this page");
+      }
+    }, [isLoggedIn, isAdmin, navigate]);
+
+    return isLoggedIn && isAdmin ? children : null;
+  }
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -77,13 +89,33 @@ function App() {
               />
               <Routes>
                 <Route path="/" element={<Dashboard />} />
-                <Route path="/tasks" element={<Tasks />} />
-                <Route path="/team" element={<Team />} />
+                <Route
+                  path="/tasks"
+                  element={
+                    <PrivateRoute isLoggedIn={isLoggedIn} isAdmin={isAdmin}>
+                      <Tasks />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/team"
+                  element={
+                    <PrivateRoute isLoggedIn={isLoggedIn} isAdmin={isAdmin}>
+                      <Team />
+                    </PrivateRoute>
+                  }
+                />
                 <Route path="/mytasks" element={<MyTasks />} />
                 <Route path="/myteam" element={<ShowTeam />} />
-                <Route path="/tasks" element={<Tasks />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/form" element={<Form />} />
+                <Route
+                  path="/form"
+                  element={
+                    <PrivateRoute isLoggedIn={isLoggedIn} isAdmin={isAdmin}>
+                      <Form />
+                    </PrivateRoute>
+                  }
+                />
                 <Route path="/contacts" element={<Contacts />} />
                 <Route path="/invoices" element={<Invoices />} />
                 <Route path="/bar" element={<Bar />} />

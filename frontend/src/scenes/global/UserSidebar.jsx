@@ -107,7 +107,7 @@ const UserSidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  User Name
+                  Cengizhan Gür
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   Task Management System User

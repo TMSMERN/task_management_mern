@@ -4,7 +4,7 @@ import cors from "cors";
 import { PORT } from "./config.js";
 import { User } from "./models/userModel.js";
 import jwt from "jsonwebtoken";
-//import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 import { Task } from "./models/taskModel.js";
 import { SubTask } from "./models/subTaskModel.js";
 
@@ -17,7 +17,7 @@ app.set("json escape", true);
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
 
-//const saltRounds = 10;
+const saltRounds = 10;
 
 /* Role Based Authorization */
 /* User Pagination */ /* Update and Delete Users */ // Update user// Update user details// Delete user
@@ -275,6 +275,7 @@ app.post("/api/register", async (req, res) => {
   if (existingUser) {
     return res.status(400).json({ error: "Username or email already exists" });
   }
+
 
   // Later we will add hashing password
   // Create the new user
